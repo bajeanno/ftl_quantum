@@ -21,12 +21,13 @@ result00 = sampler.run([qc00], shots=nbshots).result()
 result01 = sampler.run([qc01], shots=nbshots).result()
 count_result00 = result00[0].data.meas.get_counts()  # ty:ignore[unresolved-attribute]
 count_result01 = result01[0].data.meas.get_counts()  # ty:ignore[unresolved-attribute]
-values00 = {i: j/ nbshots for i, j in count_result00.items()}
-values01 = {i: j/ nbshots for i, j in count_result01.items()}
+one_qbit_superposition = {i: j/ nbshots for i, j in count_result00.items()} # add some normalisation to comply with subject
+two_qubits_superposition_entanglement = {i: j/ nbshots for i, j in count_result01.items()} # add some normalisation to comply with subject
 
-print("values 00: ", values00)
-print("values 01: ", values01)
-plot_histogram(values00)
-plt.show()
-plot_histogram(values01)
+data = [one_qbit_superposition, two_qubits_superposition_entanglement]
+title = "ex02"
+legend = ["ex00", "ex01"]
+color=['crimson','midnightblue']
+print("values : ", data)
+plot_histogram(data, title=title, legend=legend, color=color)
 plt.show()
