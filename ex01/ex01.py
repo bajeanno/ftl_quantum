@@ -1,18 +1,20 @@
-import fontTools.ttLib.standardGlyphOrder
 import matplotlib.pyplot as plt
+from qiskit_ibm_runtime import SamplerV2
 from qiskit.visualization.counts_visualization import plot_histogram
+from qiskit_aer import AerSimulator
 from qiskit import QuantumCircuit
-from qiskit.primitives import StatevectorSampler
 
 qc = QuantumCircuit(2)  # Init a quantum circuit to one qubit at state 0
 qc.h(0)                 # Operates a Hadamard gate on qubit 0 so it state is now a superposition of 0 and 1
-qc.cx(0, 1)             # Operates a controlled-x gate from qubit 0 to 1 so they are entangled
+qc.cx(0,1)
 qc.measure_all()        # Measure all qubits so they fix their states
 
+noisy_backend = AerSimulator()
 nbshots = 500
-sampler = StatevectorSampler()
-result = sampler.run([qc], shots=nbshots).result()
-count_result = result[0].data.meas.get_counts()  # ty:ignore[unresolved-attribute]
+options = {"default_shots": nbshots}
+sampler = SamplerV2(mode = noisy_backend, options = options)
+result = sampler.run([qc]).result()
+count_result = result[0].data.meas.get_counts()
 values = {i: j/ nbshots for i, j in count_result.items()}
 
 print(values)
